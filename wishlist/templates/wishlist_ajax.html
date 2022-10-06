@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<body>
+<button><a href="{% url 'wishlist:logout' %}">Logout</a></button>
+
+<h5>Nama: </h5>
+<p>Gabriel Zebaoth Krisopras Putra</p>
+
+<table  class="table table-striped table-hover" id="my-table">
+    <tr>
+        <th>Nama Barang</th>
+        <th>Harga Barang</th>
+        <th>Deskripsi</th>
+    </tr>
+</table>
+<form action="">
+
+    <div class="card-body">
+        <div class="form-group">
+            <label for="">Masukkan nama barang :</label>
+            <input type="text" class ="form-control" name="name" id="nama" placeholder="Nama barang"></input>
+        </div>
+        <div class="form-group">
+            <label for="">Masukkan harga barang :</label>
+            <input type="text" class ="form-control" name="name" id="harga" placeholder="Harga barang"></input>
+        </div>
+        <div class="form-group">
+            <div class="form-group">
+                <label for="">Masukkan deskripsi barang : </label>
+                <input type="text" class ="form-control" name="name" id="deskripsi" placeholder="Deskripsi barang"></input>
+            </div>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" id="submitButton">Submit</button>
+        </div>
+    </div>
+</form>
+
+<!-- <h5>Sesi terakhir login: {{ last_login }}</h5> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript">
+    $.ajax({
+        type: "GET",
+        url: "/wishlist/json/",
+        dataType: 'json',
+        success: function(data) {
+            console.log(data);
+            for (var i=0; i<data.length; i++) {
+                var row = $('<tr><td>' + data[i].fields.nama_barang+ '</td><td>' + data[i].fields.harga_barang + '</td><td>' + data[i].fields.deskripsi + '</td></tr>');
+                $('#my-table').append(row);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            alert('Error: ' + textStatus + ' - ' + errorThrown);
+        }
+    });
+
+    $("#submitButton").click(function(){
+        var nama = $("#nama").val();
+        var harga = $("#harga").val();
+        var deskripsi = $("#deskripsi").val();
+    })
+    </script>
+</body>
+
+{% endblock content %}
