@@ -6,9 +6,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpRequest
 from django.urls import reverse
 from django.core import serializers
+from django.views.decorators.csrf import csrf_exempt
 import datetime
 
 # Create your views here.
@@ -17,15 +18,31 @@ def show_wishlist(request):
     data_barang_wishlist = BarangWishlist.objects.all()
     context = {
         'list_barang': data_barang_wishlist,
-        'nama': 'Gabriel Zebaoth Krisopras Putra',
-        'last_login': request.COOKIES['last_login'],
+        'nama': 'Gabriel Zebaoth Krisopras Putra'
     }
     return render(request, "wishlist.html", context)
 
 
+@login_required(login_url='/wishlist/login/')
 def show_wishlist_ajax(request):
-    context={}
+    context={
+        'nama': 'Gabriel Zebaoth Krisopras Putra'
+    }
     return render(request, "wishlist_ajax.html", context);
+
+
+@csrf_exempt
+def create_wishlist_ajax(request):
+    if request.method == "POST":
+        nama_barang = request.POST.get("nama_barang")
+        harga_barang = request.POST.get("harga_barang")
+        deskripsi = request.POST.get("deskripsi")
+        barangBaru =  BarangWishlist(nama_barang=nama_barang, harga_barang=harga_barang, deskripsi=deskripsi)
+        barangBaru.save()
+        return JsonResponse({"status":"barang baru berhasil ditambahkan"}, status=200)
+    else:
+        return JsonResponse({"status":"barang baru berhasil ditambahkan"}, status=200)
+
 
 def show_xml(request):
     data = BarangWishlist.objects.all()
